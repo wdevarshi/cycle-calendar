@@ -6,280 +6,197 @@
 <title>Cycle</title>
 <style>
 :root {
-  --bg: #faf8f6;
-  --card: #ffffff;
-  --text: #2d2a26;
-  --muted: #9a9490;
-  --border: #eae6e1;
-  --menstrual: #d4a0a0;
-  --menstrual-soft: #f2e4e4;
-  --follicular: #a8c5a0;
-  --follicular-soft: #e6f0e4;
-  --ovulation: #d4c08a;
-  --ovulation-soft: #f5f0e0;
-  --luteal: #c4a882;
-  --luteal-soft: #f0ebe4;
-  --today-ring: #b07878;
-  --radius: 14px;
+  --bg: #fef9f5;
+  --text: #3b2e2a;
+  --soft: #8a7570;
+  --line: #eee5df;
+  --menstrual: #e8a0a0;
+  --menstrual-bg: #fceaea;
+  --menstrual-tx: #8b3a3a;
+  --follicular: #7dba8a;
+  --follicular-bg: #e5f5e8;
+  --follicular-tx: #2e5e38;
+  --ovulation: #e0c060;
+  --ovulation-bg: #fdf6dc;
+  --ovulation-tx: #6e5510;
+  --luteal: #d4a070;
+  --luteal-bg: #f8eddf;
+  --luteal-tx: #6b4220;
+  --accent: #c46b78;
 }
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: 'Georgia', 'Times New Roman', serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-font-smoothing: antialiased;
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Georgia','Times New Roman',serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  -webkit-tap-highlight-color:transparent;
 }
-.wrap {
-  max-width: 420px;
-  margin: 0 auto;
-  padding: 24px 16px 40px;
-}
+.wrap{max-width:440px;margin:0 auto;padding:20px 16px 48px;}
 
-/* ── phase card ── */
-.phase-card {
-  padding: 28px 24px;
-  margin-bottom: 20px;
-  border-bottom: 1px solid var(--border);
-  text-align: center;
+/* ── hero ── */
+.hero{
+  background:linear-gradient(135deg,#f9e4e8 0%,#fce8dc 50%,#f7eee4 100%);
+  border-radius:24px;
+  padding:32px 24px 28px;
+  margin-bottom:20px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
 }
-.phase-card .day-label {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 8px;
+.hero::before{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:120px;height:120px;border-radius:50%;
+  background:rgba(196,107,120,0.08);
 }
-.phase-card .phase-name {
-  font-size: 1.6rem;
-  font-weight: 400;
-  letter-spacing: -0.01em;
-  margin-bottom: 14px;
+.hero::after{
+  content:'';position:absolute;bottom:-30px;left:-20px;
+  width:80px;height:80px;border-radius:50%;
+  background:rgba(125,186,138,0.08);
 }
-.phase-card .phase-desc {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  font-size: 0.82rem;
-  line-height: 1.65;
-  color: var(--muted);
-  max-width: 320px;
-  margin: 0 auto;
+.hero .overline{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:10px;font-weight:600;
+}
+.hero .title{
+  font-size:1.7rem;font-weight:400;margin-bottom:6px;
+  letter-spacing:-0.01em;color:var(--text);
+}
+.hero .sub{
+  font-family:-apple-system,system-ui,sans-serif;
+  font-size:0.84rem;line-height:1.6;color:var(--soft);
+  max-width:300px;margin:0 auto;position:relative;z-index:1;
 }
 
 /* ── calendar ── */
-.cal-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
+.cal{
+  background:#fff;border-radius:20px;
+  padding:20px 16px;margin-bottom:20px;
+  box-shadow:0 1px 12px rgba(80,50,40,0.05);
 }
-.cal-nav h2 {
-  font-size: 1.05rem;
-  font-weight: 400;
-  letter-spacing: 0.02em;
+.nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.nav h2{font-size:1rem;font-weight:400;letter-spacing:0.01em;}
+.nav button{
+  width:44px;height:44px;border:none;background:var(--bg);
+  border-radius:50%;font-size:1.1rem;cursor:pointer;color:var(--text);
+  transition:background 0.15s;font-family:-apple-system,system-ui,sans-serif;
 }
-.cal-nav button {
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--border);
-  background: transparent;
-  border-radius: 50%;
-  font-size: 1rem;
-  cursor: pointer;
-  color: var(--text);
-  transition: border-color 0.2s;
-  font-family: -apple-system, system-ui, sans-serif;
+.nav button:active{background:var(--line);}
+.wk{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:6px;}
+.wk span{
+  text-align:center;
+  font-family:-apple-system,system-ui,sans-serif;
+  font-size:0.65rem;letter-spacing:0.06em;text-transform:uppercase;
+  color:var(--soft);padding-bottom:6px;
 }
-.cal-nav button:active { border-color: var(--muted); }
-.weekdays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  margin-bottom: 8px;
+.g{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.c{
+  aspect-ratio:1;border-radius:10px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:44px;transition:transform 0.1s;
 }
-.weekdays span {
-  text-align: center;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  font-size: 0.65rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-  padding-bottom: 8px;
+.c .n{
+  font-family:-apple-system,system-ui,sans-serif;
+  font-size:0.84rem;font-weight:500;line-height:1;
 }
-.grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 3px;
-  margin-bottom: 28px;
+.c .k{
+  font-family:-apple-system,system-ui,sans-serif;
+  font-size:0.54rem;font-weight:600;opacity:0.45;margin-top:2px;
 }
-.cell {
-  aspect-ratio: 1;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  min-height: 44px;
-}
-.cell .d {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  font-size: 0.82rem;
-  font-weight: 500;
-  line-height: 1;
-}
-.cell .c {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  font-size: 0.55rem;
-  font-weight: 500;
-  opacity: 0.5;
-  margin-top: 2px;
-}
-.cell.empty { background: transparent; }
-.cell.out { opacity: 0.28; }
-.cell.today { box-shadow: inset 0 0 0 2px var(--today-ring); }
+.c.out{opacity:0.25;}
+.c.today{box-shadow:inset 0 0 0 2px var(--accent);}
+.c.m{background:var(--menstrual-bg);color:var(--menstrual-tx);}
+.c.f{background:var(--follicular-bg);color:var(--follicular-tx);}
+.c.o{background:var(--ovulation-bg);color:var(--ovulation-tx);}
+.c.l{background:var(--luteal-bg);color:var(--luteal-tx);}
 
-.cell.p-m { background: var(--menstrual-soft); color: #7a4a4a; }
-.cell.p-f { background: var(--follicular-soft); color: #4a6844; }
-.cell.p-o { background: var(--ovulation-soft); color: #6b5a2e; }
-.cell.p-l { background: var(--luteal-soft); color: #6b553e; }
-
-/* ── legend ── */
-.legend {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-bottom: 32px;
+/* ── legend row ── */
+.leg{
+  display:flex;justify-content:center;gap:16px;flex-wrap:wrap;
+  margin-bottom:24px;
 }
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.legend-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-.legend-label {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  font-size: 0.7rem;
-  color: var(--muted);
-  letter-spacing: 0.02em;
+.leg-i{display:flex;align-items:center;gap:5px;}
+.leg-d{width:10px;height:10px;border-radius:50%;}
+.leg-t{
+  font-family:-apple-system,system-ui,sans-serif;
+  font-size:0.72rem;color:var(--soft);
 }
 
-/* ── guide ── */
-.guide {
-  border-top: 1px solid var(--border);
-  padding-top: 24px;
+/* ── guide cards ── */
+.cards{display:grid;gap:10px;margin-bottom:24px;}
+.card{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:16px;border-radius:16px;background:#fff;
+  box-shadow:0 1px 8px rgba(80,50,40,0.04);
 }
-.guide-section {
-  margin-bottom: 22px;
+.card-bar{width:3px;border-radius:3px;flex-shrink:0;align-self:stretch;min-height:40px;}
+.card-body{}
+.card-title{
+  font-size:0.88rem;font-weight:400;margin-bottom:4px;
 }
-.guide-section:last-child { margin-bottom: 0; }
-.guide-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
+.card-desc{
+  font-family:-apple-system,system-ui,sans-serif;
+  font-size:0.78rem;line-height:1.55;color:var(--soft);
 }
-.guide-pip {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.guide-title {
-  font-size: 0.85rem;
-  font-weight: 400;
-}
-.guide-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  font-size: 0.78rem;
-  line-height: 1.6;
-  color: var(--muted);
-  padding-left: 14px;
-}
-
-.footer {
-  text-align: center;
-  font-family: -apple-system, system-ui, sans-serif;
-  font-size: 0.65rem;
-  color: var(--border);
-  margin-top: 32px;
-  letter-spacing: 0.06em;
+.ft{
+  text-align:center;font-family:-apple-system,system-ui,sans-serif;
+  font-size:0.6rem;color:var(--line);letter-spacing:0.1em;text-transform:uppercase;
 }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="phase-card" id="phaseCard"></div>
-  <div>
-    <div class="cal-nav">
-      <button id="prev" aria-label="Previous">‹</button>
-      <h2 id="monthLabel"></h2>
-      <button id="next" aria-label="Next">›</button>
+  <div class="hero" id="hero"></div>
+  <div class="cal">
+    <div class="nav">
+      <button id="p" aria-label="Previous">‹</button>
+      <h2 id="ml"></h2>
+      <button id="nx" aria-label="Next">›</button>
     </div>
-    <div class="weekdays">
-      <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
-    </div>
-    <div class="grid" id="grid"></div>
+    <div class="wk"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+    <div class="g" id="g"></div>
   </div>
-  <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:var(--menstrual)"></div><span class="legend-label">Menstrual</span></div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--follicular)"></div><span class="legend-label">Follicular</span></div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--ovulation)"></div><span class="legend-label">Ovulation</span></div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--luteal)"></div><span class="legend-label">Luteal</span></div>
+  <div class="leg">
+    <div class="leg-i"><div class="leg-d" style="background:var(--menstrual)"></div><span class="leg-t">Menstrual</span></div>
+    <div class="leg-i"><div class="leg-d" style="background:var(--follicular)"></div><span class="leg-t">Follicular</span></div>
+    <div class="leg-i"><div class="leg-d" style="background:var(--ovulation)"></div><span class="leg-t">Ovulation</span></div>
+    <div class="leg-i"><div class="leg-d" style="background:var(--luteal)"></div><span class="leg-t">Luteal</span></div>
   </div>
-  <div class="guide">
-    <div class="guide-section">
-      <div class="guide-header"><div class="guide-pip" style="background:var(--menstrual)"></div><div class="guide-title">Menstrual</div></div>
-      <div class="guide-body">Rest and gentle movement. Iron-rich meals, warm soups. Sleep more if you need to.</div>
-    </div>
-    <div class="guide-section">
-      <div class="guide-header"><div class="guide-pip" style="background:var(--follicular)"></div><div class="guide-title">Follicular</div></div>
-      <div class="guide-body">Energy rises. Good time for new plans and harder workouts. Fresh foods, lean protein.</div>
-    </div>
-    <div class="guide-section">
-      <div class="guide-header"><div class="guide-pip" style="background:var(--ovulation)"></div><div class="guide-title">Ovulation</div></div>
-      <div class="guide-body">Peak energy. Schedule what matters. High-intensity training. Light, fresh meals.</div>
-    </div>
-    <div class="guide-section">
-      <div class="guide-header"><div class="guide-pip" style="background:var(--luteal)"></div><div class="guide-title">Luteal</div></div>
-      <div class="guide-body">Slow down. Wrap up loose ends. Moderate exercise. Complex carbs, dark chocolate.</div>
-    </div>
+  <div class="cards">
+    <div class="card"><div class="card-bar" style="background:var(--menstrual)"></div><div class="card-body"><div class="card-title">Menstrual</div><div class="card-desc">Rest and gentle movement. Warm soups, iron-rich meals. Sleep more if your body asks.</div></div></div>
+    <div class="card"><div class="card-bar" style="background:var(--follicular)"></div><div class="card-body"><div class="card-title">Follicular</div><div class="card-desc">Energy rising — plan ahead, try new things. Harder workouts. Fresh foods, lean protein.</div></div></div>
+    <div class="card"><div class="card-bar" style="background:var(--ovulation)"></div><div class="card-body"><div class="card-title">Ovulation</div><div class="card-desc">Your peak. Schedule what matters, go all in. HIIT, strength. Light fresh meals, antioxidants.</div></div></div>
+    <div class="card"><div class="card-bar" style="background:var(--luteal)"></div><div class="card-body"><div class="card-title">Luteal</div><div class="card-desc">Wind down, wrap things up. Moderate movement — pilates, walks. Complex carbs, dark chocolate.</div></div></div>
   </div>
-  <div class="footer">cycle</div>
+  <div class="ft">cycle</div>
 </div>
-
 <script>
-const S = new Date(2026, 1, 24), L = 27, T = new Date();
-const P = [
-  {n:'Menstrual', r:[1,5], c:'p-m', d:'Rest, restore, be gentle with yourself.'},
-  {n:'Follicular', r:[6,13], c:'p-f', d:'Energy building — lean into new beginnings.'},
-  {n:'Ovulation', r:[14,16], c:'p-o', d:'Your brightest window. Show up fully.'},
-  {n:'Luteal', r:[17,L], c:'p-l', d:'Slow down. Nourish. Finish what you started.'}
+const S=new Date(2026,1,24),L=27,T=new Date();
+const P=[
+  {n:'Menstrual',r:[1,5],c:'m',d:'Rest, restore, be gentle with yourself.'},
+  {n:'Follicular',r:[6,13],c:'f',d:'Your energy is building — lean into it.'},
+  {n:'Ovulation',r:[14,16],c:'o',d:'Your brightest window. Show up fully.'},
+  {n:'Luteal',r:[17,L],c:'l',d:'Slow down. Nourish. Finish what you started.'}
 ];
-function cd(date){const diff=Math.floor((new Date(date.getFullYear(),date.getMonth(),date.getDate())-new Date(S.getFullYear(),S.getMonth(),S.getDate()))/864e5);return((diff%L)+L)%L+1;}
+const MO=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function cd(dt){const d=Math.floor((new Date(dt.getFullYear(),dt.getMonth(),dt.getDate())-new Date(S.getFullYear(),S.getMonth(),S.getDate()))/864e5);return((d%L)+L)%L+1;}
 function gp(d){return P.find(p=>d>=p.r[0]&&d<=p.r[1])||P[3];}
 let vY=T.getFullYear(),vM=T.getMonth();
-const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
-
 function render(){
-  document.getElementById('monthLabel').textContent=MN[vM]+' '+vY;
-  const day=cd(T),ph=gp(day);
-  document.getElementById('phaseCard').innerHTML=
-    `<div class="day-label">Day ${day} of ${L}</div><div class="phase-name">${ph.n}</div><div class="phase-desc">${ph.d}</div>`;
-  const g=document.getElementById('grid');g.innerHTML='';
-  const f=new Date(vY,vM,1).getDay(),dim=new Date(vY,vM+1,0).getDate(),pDim=new Date(vY,vM,0).getDate();
-  for(let i=f-1;i>=0;i--){const d=pDim-i,dt=new Date(vY,vM-1,d),cy=cd(dt),p=gp(cy);g.innerHTML+=`<div class="cell out ${p.c}"><span class="d">${d}</span><span class="c">${cy}</span></div>`;}
-  for(let d=1;d<=dim;d++){const dt=new Date(vY,vM,d),cy=cd(dt),p=gp(cy),t=d===T.getDate()&&vM===T.getMonth()&&vY===T.getFullYear();g.innerHTML+=`<div class="cell ${p.c}${t?' today':''}"><span class="d">${d}</span><span class="c">${cy}</span></div>`;}
+  document.getElementById('ml').textContent=MO[vM]+' '+vY;
+  const dy=cd(T),ph=gp(dy);
+  document.getElementById('hero').innerHTML=
+    `<div class="overline">Day ${dy} of ${L}</div><div class="title">${ph.n}</div><div class="sub">${ph.d}</div>`;
+  const g=document.getElementById('g');g.innerHTML='';
+  const f=new Date(vY,vM,1).getDay(),dim=new Date(vY,vM+1,0).getDate(),pd=new Date(vY,vM,0).getDate();
+  for(let i=f-1;i>=0;i--){const d=pd-i,dt=new Date(vY,vM-1,d),cy=cd(dt),p=gp(cy);g.innerHTML+=`<div class="c out ${p.c}"><span class="n">${d}</span><span class="k">${cy}</span></div>`;}
+  for(let d=1;d<=dim;d++){const dt=new Date(vY,vM,d),cy=cd(dt),p=gp(cy),t=d===T.getDate()&&vM===T.getMonth()&&vY===T.getFullYear();g.innerHTML+=`<div class="c ${p.c}${t?' today':''}"><span class="n">${d}</span><span class="k">${cy}</span></div>`;}
   const tot=f+dim,rem=(7-tot%7)%7;
-  for(let d=1;d<=rem;d++){const dt=new Date(vY,vM+1,d),cy=cd(dt),p=gp(cy);g.innerHTML+=`<div class="cell out ${p.c}"><span class="d">${d}</span><span class="c">${cy}</span></div>`;}
+  for(let d=1;d<=rem;d++){const dt=new Date(vY,vM+1,d),cy=cd(dt),p=gp(cy);g.innerHTML+=`<div class="c out ${p.c}"><span class="n">${d}</span><span class="k">${cy}</span></div>`;}
 }
-document.getElementById('prev').onclick=()=>{vM--;if(vM<0){vM=11;vY--;}render();};
-document.getElementById('next').onclick=()=>{vM++;if(vM>11){vM=0;vY++;}render();};
+document.getElementById('p').onclick=()=>{vM--;if(vM<0){vM=11;vY--;}render();};
+document.getElementById('nx').onclick=()=>{vM++;if(vM>11){vM=0;vY++;}render();};
 render();
 </script>
 </body>
