@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Cycle Calendar 🌸</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #f3e8ff 100%);
+  min-height: 100vh;
+  color: #4a1942;
+  -webkit-tap-highlight-color: transparent;
+}
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px;
+}
+.phase-banner {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 16px rgba(180, 100, 160, 0.12);
+  text-align: center;
+}
+.phase-banner .phase-emoji { font-size: 2rem; margin-bottom: 4px; }
+.phase-banner .phase-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.phase-banner .cycle-day {
+  font-size: 0.95rem;
+  opacity: 0.7;
+  margin-bottom: 10px;
+}
+.phase-banner .phase-tip {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: #6b4c6b;
+  background: #fdf2f8;
+  border-radius: 12px;
+  padding: 12px;
+}
+.calendar-card {
+  background: white;
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 16px rgba(180, 100, 160, 0.12);
+}
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.cal-header h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.cal-header button {
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: #fdf2f8;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #9b4d96;
+  font-weight: 700;
+  transition: background 0.15s;
+}
+.cal-header button:hover { background: #fce7f3; }
+.cal-header button:active { background: #f9a8d4; }
+.day-headers {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  margin-bottom: 6px;
+}
+.day-headers span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #b07aac;
+  padding: 4px 0;
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.cal-cell {
+  aspect-ratio: 1;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  position: relative;
+  transition: transform 0.1s;
+  cursor: default;
+  min-height: 44px;
+}
+.cal-cell.empty { background: transparent; }
+.cal-cell .date-num { font-size: 0.88rem; line-height: 1.2; }
+.cal-cell .cycle-num {
+  font-size: 0.6rem;
+  font-weight: 700;
+  opacity: 0.65;
+  line-height: 1;
+  margin-top: 1px;
+}
+.cal-cell.today {
+  outline: 2.5px solid #d946ef;
+  outline-offset: -2px;
+  z-index: 1;
+}
+.cal-cell.other-month { opacity: 0.35; }
+/* Phase colors */
+.phase-menstrual { background: #fecdd3; color: #9f1239; }
+.phase-follicular { background: #bbf7d0; color: #166534; }
+.phase-ovulation { background: #fef08a; color: #854d0e; }
+.phase-luteal { background: #fed7aa; color: #9a3412; }
+/* Legend */
+.legend {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 16px rgba(180, 100, 160, 0.12);
+}
+.legend h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.legend-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.legend-item:last-child { margin-bottom: 0; }
+.legend-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.legend-text .legend-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.legend-text .legend-desc {
+  font-size: 0.8rem;
+  color: #7c6479;
+  line-height: 1.4;
+}
+.footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #c4a0be;
+  padding: 8px 0 24px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="phase-banner" id="phaseBanner"></div>
+  <div class="calendar-card">
+    <div class="cal-header">
+      <button id="prevBtn" aria-label="Previous month">‹</button>
+      <h2 id="monthLabel"></h2>
+      <button id="nextBtn" aria-label="Next month">›</button>
+    </div>
+    <div class="day-headers">
+      <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+  </div>
+  <div class="legend">
+    <h3>🌸 Cycle Phases</h3>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#fecdd3;"></div>
+      <div class="legend-text">
+        <div class="legend-label">🩷 Menstrual (Days 1–5)</div>
+        <div class="legend-desc">Rest & reset. Gentle movement — walks, yoga, stretching. Comfort foods, iron-rich meals, warm soups. Listen to your body.</div>
+      </div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#bbf7d0;"></div>
+      <div class="legend-text">
+        <div class="legend-label">🌱 Follicular (Days 6–13)</div>
+        <div class="legend-desc">Rising energy! Try new things, plan ahead. Push workouts — running, strength training, dance. Fresh foods, fermented foods, lean protein.</div>
+      </div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#fef08a;"></div>
+      <div class="legend-text">
+        <div class="legend-label">✨ Ovulation (Days 14–16)</div>
+        <div class="legend-desc">Peak power! Schedule big meetings, social events. Intense workouts — HIIT, heavy lifts. Light fresh meals, raw veggies, antioxidant-rich fruits.</div>
+      </div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#fed7aa;"></div>
+      <div class="legend-text">
+        <div class="legend-label">🍂 Luteal (Days 17–27)</div>
+        <div class="legend-desc">Wind down, finish projects, set boundaries. Moderate exercise — pilates, swimming, hiking. Complex carbs, magnesium-rich foods, dark chocolate. Extra self-care.</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">Made with 🩷</div>
+</div>
+
+<script>
+const PERIOD_START = new Date(2026, 1, 24); // Feb 24, 2026
+const CYCLE_LENGTH = 27;
+
+const PHASES = [
+  { name: 'Menstrual', days: [1,5], emoji: '🩷', cls: 'phase-menstrual',
+    tip: '🧘‍♀️ Rest & reset — gentle yoga, walks, stretching.\n🍲 Warm soups, iron-rich foods (spinach, lentils, dark chocolate).\n💤 Extra sleep is totally okay. Listen to your body.' },
+  { name: 'Follicular', days: [6,13], emoji: '🌱', cls: 'phase-follicular',
+    tip: '⚡ Energy is rising — try something new!\n🏋️ Push workouts: running, strength training, dance classes.\n🥗 Fresh foods, fermented foods, lean protein. Plan big things.' },
+  { name: 'Ovulation', days: [14,16], emoji: '✨', cls: 'phase-ovulation',
+    tip: '🔥 Peak energy & confidence — you\'re magnetic!\n💪 Go hard: HIIT, heavy lifts, group sports.\n🍓 Light fresh meals, raw veggies, antioxidant fruits. Social events!' },
+  { name: 'Luteal', days: [17,CYCLE_LENGTH], emoji: '🍂', cls: 'phase-luteal',
+    tip: '🫶 Wind down — finish projects, set boundaries.\n🏊 Moderate: pilates, swimming, hiking.\n🍫 Complex carbs, magnesium-rich foods, dark chocolate. Self-care mode.' }
+];
+
+function getCycleDay(date) {
+  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const s = new Date(PERIOD_START.getFullYear(), PERIOD_START.getMonth(), PERIOD_START.getDate());
+  const diff = Math.floor((d - s) / 86400000);
+  return ((diff % CYCLE_LENGTH) + CYCLE_LENGTH) % CYCLE_LENGTH + 1;
+}
+
+function getPhase(cycleDay) {
+  return PHASES.find(p => cycleDay >= p.days[0] && cycleDay <= p.days[1]) || PHASES[3];
+}
+
+let viewYear, viewMonth;
+const today = new Date();
+
+function init() {
+  viewYear = today.getFullYear();
+  viewMonth = today.getMonth();
+  document.getElementById('prevBtn').addEventListener('click', () => { navigate(-1); });
+  document.getElementById('nextBtn').addEventListener('click', () => { navigate(1); });
+  render();
+}
+
+function navigate(dir) {
+  viewMonth += dir;
+  if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+  if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+  render();
+}
+
+function render() {
+  // Month label
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('monthLabel').textContent = monthNames[viewMonth] + ' ' + viewYear;
+
+  // Phase banner for today
+  const todayCycleDay = getCycleDay(today);
+  const todayPhase = getPhase(todayCycleDay);
+  document.getElementById('phaseBanner').innerHTML =
+    `<div class="phase-emoji">${todayPhase.emoji}</div>
+     <div class="phase-name">${todayPhase.name} Phase</div>
+     <div class="cycle-day">Cycle Day ${todayCycleDay} of ${CYCLE_LENGTH}</div>
+     <div class="phase-tip">${todayPhase.tip.replace(/\n/g, '<br>')}</div>`;
+
+  // Calendar grid
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+  const daysInPrev = new Date(viewYear, viewMonth, 0).getDate();
+
+  // Previous month padding
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const d = daysInPrev - i;
+    const date = new Date(viewYear, viewMonth - 1, d);
+    const cd = getCycleDay(date);
+    const phase = getPhase(cd);
+    grid.innerHTML += `<div class="cal-cell other-month ${phase.cls}">
+      <span class="date-num">${d}</span><span class="cycle-num">D${cd}</span></div>`;
+  }
+
+  // Current month
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = new Date(viewYear, viewMonth, d);
+    const cd = getCycleDay(date);
+    const phase = getPhase(cd);
+    const isToday = (d === today.getDate() && viewMonth === today.getMonth() && viewYear === today.getFullYear());
+    grid.innerHTML += `<div class="cal-cell ${phase.cls}${isToday ? ' today' : ''}">
+      <span class="date-num">${d}</span><span class="cycle-num">D${cd}</span></div>`;
+  }
+
+  // Next month padding
+  const totalCells = firstDay + daysInMonth;
+  const remaining = (7 - (totalCells % 7)) % 7;
+  for (let d = 1; d <= remaining; d++) {
+    const date = new Date(viewYear, viewMonth + 1, d);
+    const cd = getCycleDay(date);
+    const phase = getPhase(cd);
+    grid.innerHTML += `<div class="cal-cell other-month ${phase.cls}">
+      <span class="date-num">${d}</span><span class="cycle-num">D${cd}</span></div>`;
+  }
+}
+
+init();
+</script>
+</body>
+</html>
