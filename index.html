@@ -243,7 +243,8 @@ document.getElementById('p').onclick=()=>{vM--;if(vM<0){vM=11;vY--;}render();};
 document.getElementById('nx').onclick=()=>{vM++;if(vM>11){vM=0;vY++;}render();};
 const ds=document.getElementById('ds'),dl=document.getElementById('dl');
 function pad(x){return String(x).padStart(2,'0');}
-ds.value=S.getFullYear()+'-'+pad(S.getMonth()+1)+'-'+pad(S.getDate());
+const today=T.getFullYear()+'-'+pad(T.getMonth()+1)+'-'+pad(T.getDate());
+ds.value=today;ds.max=today;
 dl.value=L;
 ds.onchange=()=>{
   if(!ds.value)return;
