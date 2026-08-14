@@ -111,6 +111,37 @@ body{
 .c.o{background:var(--ovulation-bg);color:var(--ovulation-tx);}
 .c.l{background:var(--luteal-bg);color:var(--luteal-tx);}
 
+/* ── settings ── */
+.set{
+  display:flex;gap:10px;
+  background:#fff;border-radius:16px;
+  padding:16px;margin-bottom:20px;
+  box-shadow:0 1px 8px rgba(80,50,40,0.04);
+}
+.set-f{flex:1;min-width:0;}
+.set-f label{
+  display:block;
+  font-family:-apple-system,system-ui,sans-serif;
+  font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--soft);margin-bottom:6px;font-weight:600;
+}
+.set-f input{
+  width:100%;
+  font-family:-apple-system,system-ui,sans-serif;
+  font-size:0.84rem;color:var(--text);
+  background:var(--bg);border:1px solid var(--line);
+  border-radius:10px;padding:10px 12px;
+  outline:none;appearance:none;-webkit-appearance:none;
+  min-height:44px;
+}
+.set-f input:focus{border-color:var(--accent);}
+.len{position:relative;}
+.len span{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  font-family:-apple-system,system-ui,sans-serif;
+  font-size:0.72rem;color:var(--soft);pointer-events:none;
+}
+
 /* ── legend row ── */
 .leg{
   display:flex;justify-content:center;gap:16px;flex-wrap:wrap;
@@ -157,6 +188,16 @@ body{
     <div class="wk"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
     <div class="g" id="g"></div>
   </div>
+  <div class="set">
+    <div class="set-f">
+      <label for="ds">Period started</label>
+      <input type="date" id="ds">
+    </div>
+    <div class="set-f">
+      <label for="dl">Cycle length</label>
+      <div class="len"><input type="number" id="dl" min="20" max="45" inputmode="numeric"><span>days</span></div>
+    </div>
+  </div>
   <div class="leg">
     <div class="leg-i"><div class="leg-d" style="background:var(--menstrual)"></div><span class="leg-t">Menstrual</span></div>
     <div class="leg-i"><div class="leg-d" style="background:var(--follicular)"></div><span class="leg-t">Follicular</span></div>
@@ -172,12 +213,15 @@ body{
   <div class="ft">cycle</div>
 </div>
 <script>
-const S=new Date(2026,1,24),L=27,T=new Date();
+const DEF_START='2026-02-24',DEF_LEN=27,T=new Date();
+function loadStart(){const v=localStorage.getItem('cycle.start')||DEF_START;const[y,m,d]=v.split('-').map(Number);return new Date(y,m-1,d);}
+function loadLen(){const v=parseInt(localStorage.getItem('cycle.len'),10);return v>=20&&v<=45?v:DEF_LEN;}
+let S=loadStart(),L=loadLen();
 const P=[
   {n:'Menstrual',r:[1,5],c:'m',d:'Rest, restore, be gentle with yourself.'},
   {n:'Follicular',r:[6,13],c:'f',d:'Your energy is building — lean into it.'},
   {n:'Ovulation',r:[14,16],c:'o',d:'Your brightest window. Show up fully.'},
-  {n:'Luteal',r:[17,L],c:'l',d:'Slow down. Nourish. Finish what you started.'}
+  {n:'Luteal',r:[17,999],c:'l',d:'Slow down. Nourish. Finish what you started.'}
 ];
 const MO=['January','February','March','April','May','June','July','August','September','October','November','December'];
 function cd(dt){const d=Math.floor((new Date(dt.getFullYear(),dt.getMonth(),dt.getDate())-new Date(S.getFullYear(),S.getMonth(),S.getDate()))/864e5);return((d%L)+L)%L+1;}
@@ -197,6 +241,21 @@ function render(){
 }
 document.getElementById('p').onclick=()=>{vM--;if(vM<0){vM=11;vY--;}render();};
 document.getElementById('nx').onclick=()=>{vM++;if(vM>11){vM=0;vY++;}render();};
+const ds=document.getElementById('ds'),dl=document.getElementById('dl');
+function pad(x){return String(x).padStart(2,'0');}
+ds.value=S.getFullYear()+'-'+pad(S.getMonth()+1)+'-'+pad(S.getDate());
+dl.value=L;
+ds.onchange=()=>{
+  if(!ds.value)return;
+  localStorage.setItem('cycle.start',ds.value);
+  S=loadStart();render();
+};
+dl.onchange=()=>{
+  const v=parseInt(dl.value,10);
+  if(!(v>=20&&v<=45)){dl.value=L;return;}
+  localStorage.setItem('cycle.len',v);
+  L=loadLen();dl.value=L;render();
+};
 render();
 </script>
 </body>
