@@ -213,7 +213,14 @@ body{
   <div class="ft">cycle</div>
 </div>
 <script>
-const DEF_START='2026-02-24',DEF_LEN=27,T=new Date();
+const DEF_START='2026-09-12',DEF_LEN=28,T=new Date();
+// DEF_START is the last period logged in the tracker. If it is newer than what this
+// device saved, the tracker wins and the stale local copy is dropped — otherwise a
+// newly logged period would never reach a phone that had once set a date by hand.
+if((localStorage.getItem('cycle.start')||'')<DEF_START){
+  localStorage.removeItem('cycle.start');
+  localStorage.removeItem('cycle.len');
+}
 function loadStart(){const v=localStorage.getItem('cycle.start')||DEF_START;const[y,m,d]=v.split('-').map(Number);return new Date(y,m-1,d);}
 function loadLen(){const v=parseInt(localStorage.getItem('cycle.len'),10);return v>=20&&v<=45?v:DEF_LEN;}
 let S=loadStart(),L=loadLen();
@@ -244,7 +251,7 @@ document.getElementById('nx').onclick=()=>{vM++;if(vM>11){vM=0;vY++;}render();};
 const ds=document.getElementById('ds'),dl=document.getElementById('dl');
 function pad(x){return String(x).padStart(2,'0');}
 const today=T.getFullYear()+'-'+pad(T.getMonth()+1)+'-'+pad(T.getDate());
-ds.value=today;ds.max=today;
+ds.value=localStorage.getItem('cycle.start')||DEF_START;ds.max=today;
 dl.value=L;
 ds.onchange=()=>{
   if(!ds.value)return;
